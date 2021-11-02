@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace ECommerce.Shared.Dtos
 {
-    public class ResponseDto<T>
+    public class Response<T>
     {
         public T Data { get; set; }
 
@@ -15,21 +15,21 @@ namespace ECommerce.Shared.Dtos
 
         public List<string> Errors { get; set; }
 
-        public static ResponseDto<T> Success(T data, int statusCode) => new ResponseDto<T>()
+        public static Response<T> Success(T data, int statusCode) => new Response<T>()
         {
             Data = data,
             StatusCode = statusCode,
             IsSuccessful = statusCode >= 200 && statusCode < 400
         };
 
-        public static ResponseDto<T> Success(int statusCode) => new ResponseDto<T>()
+        public static Response<T> Success(int statusCode) => new Response<T>()
         {
             Data = default(T),
             StatusCode = statusCode,
             IsSuccessful = statusCode >= 200 && statusCode < 400
         };
 
-        public static ResponseDto<T> Fail(List<string> errors, int statusCode) => new ResponseDto<T>()
+        public static Response<T> Fail(List<string> errors, int statusCode) => new Response<T>()
         {
             Data = default(T),
             Errors = errors,
@@ -37,7 +37,7 @@ namespace ECommerce.Shared.Dtos
             IsSuccessful = statusCode >= 200 && statusCode < 400
         };
 
-        public static ResponseDto<T> Fail(string error, int statusCode) => new ResponseDto<T>()
+        public static Response<T> Fail(string error, int statusCode) => new Response<T>()
         {
             Data = default(T),
             Errors = new List<string>() { error },
