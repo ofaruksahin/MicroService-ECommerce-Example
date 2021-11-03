@@ -4,7 +4,7 @@ using System;
 
 namespace ECommerce.Services.Catalog.Models
 {
-    internal class Course
+    public class Course
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Services.Catalog.Services
 {
-    internal class CourseService : ICourseService
+    public class CourseService : ICourseService
     {
         private readonly IMongoCollection<Course> _courseCollection;
         private readonly IMongoCollection<Category> _categoryCollection;
@@ -54,7 +54,7 @@ namespace ECommerce.Services.Catalog.Services
             return Response<CourseDto>.Success(_mapper.Map<CourseDto>(course), 200);
         }
 
-        public async Task<Response<List<CourseDto>>> GetAllByUserId(string userId)
+        public async Task<Response<List<CourseDto>>> GetAllByUserIdAsync(string userId)
         {
             var courses = await _courseCollection.Find(course => course.UserId == userId).ToListAsync();
             if (courses.Any())
@@ -78,7 +78,7 @@ namespace ECommerce.Services.Catalog.Services
             return Response<CourseDto>.Success(_mapper.Map<CourseDto>(course), 200);
         }
 
-        public async Task<Response<NoContent>> ResponseAsync(CourseUpdateDto dto)
+        public async Task<Response<NoContent>> UpdateAsync(CourseUpdateDto dto)
         {
             var updateCourse = _mapper.Map<Course>(dto);
 

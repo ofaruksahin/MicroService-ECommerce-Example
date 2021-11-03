@@ -13,7 +13,7 @@ namespace ECommerce.Shared.Dtos
         [JsonIgnore]
         public bool IsSuccessful { get; private set; }
 
-        public List<string> Errors { get; set; }
+        public List<string> Errors { get; set; } = new List<string>();
 
         public static Response<T> Success(T data, int statusCode) => new Response<T>()
         {

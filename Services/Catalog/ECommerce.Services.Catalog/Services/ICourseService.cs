@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Services.Catalog.Services
 {
-    internal interface ICourseService
+    public interface ICourseService
     {
         Task<Response<List<CourseDto>>> GetAllAsync();
         Task<Response<CourseDto>> GetByIdAsync(string id);
-        Task<Response<List<CourseDto>>> GetAllByUserId(string userId);
+        Task<Response<List<CourseDto>>> GetAllByUserIdAsync(string userId);
         Task<Response<CourseDto>> CreateAsync(CourseCreateDto dto);
-        Task<Response<NoContent>> ResponseAsync(CourseUpdateDto dto);
+        Task<Response<NoContent>> UpdateAsync(CourseUpdateDto dto);
         Task<Response<NoContent>> DeleteAsync(string id);
     }
 }
