@@ -1,13 +1,14 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ECommerce.Services.Basket.Services;
+using ECommerce.Services.Basket.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
-namespace ECommerce.Services.PhotoStock
+namespace ECommerce.Services.Basket
 {
     public class Startup
     {
@@ -21,22 +22,17 @@ namespace ECommerce.Services.PhotoStock
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(options => {
-                options.Filters.Add(new AuthorizeFilter());
+            services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
+            services.AddSingleton<IRedisSettings>(sp =>
+            {
+                return sp.GetRequiredService<IOptions<RedisSettings>>().Value;
             });
+            services.AddScoped<IBasketService, BasketService>();
+            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ECommerce.Services.PhotoStock", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ECommerce.Services.Basket", Version = "v1" });
             });
-
-            services
-              .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-              .AddJwtBearer(options =>
-              {
-                  options.Authority = Configuration["IdentityServerURL"];
-                  options.Audience = "photo_stock_catalog";
-                  options.RequireHttpsMetadata = false;
-              });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,14 +42,11 @@ namespace ECommerce.Services.PhotoStock
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ECommerce.Services.PhotoStock v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ECommerce.Services.Basket v1"));
             }
-
-            app.UseStaticFiles();
 
             app.UseRouting();
 
-            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

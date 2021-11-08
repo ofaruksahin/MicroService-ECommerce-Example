@@ -1,3 +1,4 @@
-- Catalog API => 5011
 - Identity Server => 5001
+- Catalog API => 5011
 - Catalog API => 5012
+- Basket API => 5013
