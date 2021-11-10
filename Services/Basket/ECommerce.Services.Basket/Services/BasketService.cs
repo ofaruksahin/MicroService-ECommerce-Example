@@ -1,24 +1,37 @@
 ﻿using ECommerce.Services.Basket.Dtos;
 using ECommerce.Shared.Dtos;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ECommerce.Services.Basket.Services
 {
     public class BasketService : IBasketService
     {
-        public Task<Response<bool>> Delete(string userId)
+        private readonly RedisService _redisService;
+
+        public BasketService(RedisService redisService)
         {
-            throw new System.NotImplementedException();
+            _redisService = redisService;
         }
 
-        public Task<Response<BasketDto>> GetBasket(string userId)
+        public async Task<Response<bool>> Delete(string userId)
         {
-            throw new System.NotImplementedException();
+            var status = await _redisService.GetDatabase().KeyDeleteAsync(userId);
+            return status ? Response<bool>.Success(true, 204) : Response<bool>.Fail("Basket could not delete", 404);
         }
 
-        public Task<Response<bool>> SaveOrUpdate(BasketDto basketDto)
+        public async Task<Response<BasketDto>> GetBasket(string userId)
         {
-            throw new System.NotImplementedException();
+            var existBasket = await _redisService.GetDatabase().StringGetAsync(userId);
+            if (string.IsNullOrEmpty(existBasket))
+                return Response<BasketDto>.Fail("Basket Not Found", 404);
+            return Response<BasketDto>.Success(JsonSerializer.Deserialize<BasketDto>(existBasket), 200);
+        }
+
+        public async Task<Response<bool>> SaveOrUpdate(BasketDto basketDto)
+        {
+            var status = await _redisService.GetDatabase().StringSetAsync(basketDto.UserId, JsonSerializer.Serialize(basketDto));
+            return status ? Response<bool>.Success(true, 204) : Response<bool>.Fail("Basket could not update or save", 500);
         }
     }
 }

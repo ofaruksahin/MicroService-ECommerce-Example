@@ -1,5 +1,6 @@
 using ECommerce.Services.Catalog.Services;
 using ECommerce.Services.Catalog.Settings;
+using ECommerce.Shared.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,7 @@ namespace ECommerce.Services.Catalog
 
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ISharedIdentityService, SharedIdentityService>();
 
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers(options =>
@@ -50,6 +52,8 @@ namespace ECommerce.Services.Catalog
                     options.Audience = "resource_catalog";
                     options.RequireHttpsMetadata = false;
                 });
+
+            services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

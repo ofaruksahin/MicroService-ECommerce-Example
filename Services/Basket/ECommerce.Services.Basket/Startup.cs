@@ -1,5 +1,6 @@
 using ECommerce.Services.Basket.Services;
 using ECommerce.Services.Basket.Settings;
+using ECommerce.Shared.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,16 +24,31 @@ namespace ECommerce.Services.Basket
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
+
             services.AddSingleton<IRedisSettings>(sp =>
             {
                 return sp.GetRequiredService<IOptions<RedisSettings>>().Value;
             });
+
+            services.AddSingleton<RedisService>(sp =>
+            {
+                var settings = sp.GetRequiredService<IRedisSettings>();
+                var redis = new RedisService(settings);
+
+                redis.Connect();
+
+                return redis;
+            });
+            services.AddScoped<ISharedIdentityService, SharedIdentityService>();
+
             services.AddScoped<IBasketService, BasketService>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ECommerce.Services.Basket", Version = "v1" });
             });
+
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
