@@ -34,7 +34,7 @@ namespace ECommerce.Services.PhotoStock
               .AddJwtBearer(options =>
               {
                   options.Authority = Configuration["IdentityServerURL"];
-                  options.Audience = "photo_stock_catalog";
+                  options.Audience = "resource_photo_stock";
                   options.RequireHttpsMetadata = false;
               });
         }

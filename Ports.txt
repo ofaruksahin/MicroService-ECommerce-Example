@@ -2,3 +2,4 @@
 - Catalog API => 5011
 - Catalog API => 5012
 - Basket API => 5013
+- Discount API => 5014
