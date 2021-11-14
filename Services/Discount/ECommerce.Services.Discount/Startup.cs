@@ -1,12 +1,17 @@
 using ECommerce.Services.Discount.Services;
 using ECommerce.Services.Discount.Settings;
+using ECommerce.Shared.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ECommerce.Services.Discount
 {
@@ -21,7 +26,26 @@ namespace ECommerce.Services.Discount
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            var requreAuthorizePolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build(); ;
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(new AuthorizeFilter(requreAuthorizePolicy));
+            });
+
+            services
+               .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(options =>
+               {
+                   options.Authority = Configuration["IdentityServerURL"];
+                   options.Audience = "resource_discount";
+                   options.RequireHttpsMetadata = false;
+               });
+
+            services.AddHttpContextAccessor();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ECommerce.Services.Discount", Version = "v1" });
@@ -35,6 +59,7 @@ namespace ECommerce.Services.Discount
 
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IDiscountService, DiscountService>();
+            services.AddScoped<ISharedIdentityService, SharedIdentityService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -48,6 +73,7 @@ namespace ECommerce.Services.Discount
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
