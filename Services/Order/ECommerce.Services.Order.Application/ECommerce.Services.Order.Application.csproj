@@ -4,4 +4,13 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ECommerce.Services.Order.Domain\ECommerce.Services.Order.Domain.csproj" />
+    <ProjectReference Include="..\ECommerce.Services.Order.Infrastructure\ECommerce.Services.Order.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
