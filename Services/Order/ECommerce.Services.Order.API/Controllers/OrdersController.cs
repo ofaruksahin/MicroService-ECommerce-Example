@@ -1,4 +1,5 @@
-﻿using ECommerce.Services.Order.Application.Dtos;
+﻿using ECommerce.Services.Order.Application.Commands;
+using ECommerce.Services.Order.Application.Dtos;
 using ECommerce.Services.Order.Application.Queries;
 using ECommerce.Shared.ControllerBases;
 using ECommerce.Shared.Services;
@@ -29,6 +30,14 @@ namespace ECommerce.Services.Order.API.Controllers
             {
                 UserId = _identityService.GetUserId
             });
+
+            return CreateActionResultInstance(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveOrder(CreateOrderCommand orderCommand)
+        {
+            var response = await _mediator.Send(orderCommand);
 
             return CreateActionResultInstance(response);
         }
