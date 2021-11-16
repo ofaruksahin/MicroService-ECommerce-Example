@@ -38,7 +38,7 @@ namespace ECommerce.Services.Order.Application.Handlers
 
             var result = await _dbContext.SaveChangesAsync();
 
-            return result > 0 ? Response<CreatedOrderDto>.Success(new () { OrderId = result }, 200) : Response<CreatedOrderDto>.Fail("Order not created", 400);
+            return result > 0 ? Response<CreatedOrderDto>.Success(new () { OrderId = newOrder.Id }, 200) : Response<CreatedOrderDto>.Fail("Order not created", 400);
         }
     }
 }

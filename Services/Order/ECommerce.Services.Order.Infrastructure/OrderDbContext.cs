@@ -4,7 +4,6 @@ namespace ECommerce.Services.Order.Infrastructure
 {
     public class OrderDbContext : DbContext
     {
-        public const string DEFAULT_SCHEMA = "ordering";
 
         public OrderDbContext(DbContextOptions<OrderDbContext> options) : base(options)
         {
@@ -17,10 +16,10 @@ namespace ECommerce.Services.Order.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Domain.OrderAggregate.Order>()
-                .ToTable("Orders", DEFAULT_SCHEMA);
+                .ToTable("Orders");
 
             modelBuilder.Entity<Domain.OrderAggregate.OrderItem>()
-                .ToTable("OrderItems", DEFAULT_SCHEMA);
+                .ToTable("OrderItems");
 
             modelBuilder.Entity<Domain.OrderAggregate.OrderItem>()
                 .Property(p => p.Price)
