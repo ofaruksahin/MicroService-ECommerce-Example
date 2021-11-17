@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Services.Discount.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class DiscountsController : CustomBaseController
     {
         private readonly IDiscountService _discountService;

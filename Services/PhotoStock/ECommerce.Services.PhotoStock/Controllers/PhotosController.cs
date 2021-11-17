@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Services.PhotoStock.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class PhotosController : CustomBaseController
     {
         [HttpPost]
