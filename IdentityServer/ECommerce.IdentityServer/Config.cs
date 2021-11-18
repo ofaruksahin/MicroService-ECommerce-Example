@@ -34,9 +34,13 @@ namespace ECommerce.IdentityServer
             {
                 Scopes ={ "order_fullpermission" }
             },
-               new ApiResource("resource_payment")
+            new ApiResource("resource_payment")
             {
                 Scopes ={ "payment_fullpermission" }
+            },
+            new ApiResource("resource_gateway")
+            {
+                Scopes = {"gateway_fullpermission"}
             },
             new ApiResource(IdentityServerConstants.LocalApi.ScopeName),
         };
@@ -65,6 +69,7 @@ namespace ECommerce.IdentityServer
                new ApiScope("discount_fullpermission","Discount API için full erişim"),
                new ApiScope("order_fullpermission","Order API için full erişim"),
                new ApiScope("payment_fullpermission","Fake Payment API için full erişim"),
+               new ApiScope("gateway_fullpermission","Gateway için full erişim"),
                new ApiScope(IdentityServerConstants.LocalApi.ScopeName)
             };
 
@@ -77,7 +82,7 @@ namespace ECommerce.IdentityServer
                     ClientId = "WebMvcClient",
                     ClientSecrets = {new Secret("secret".Sha256())},
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    AllowedScopes = { "catalog_fullpermission", "photo_stock_fullpermission",IdentityServerConstants.LocalApi.ScopeName }
+                    AllowedScopes = { "catalog_fullpermission", "photo_stock_fullpermission", "gateway_fullpermission", IdentityServerConstants.LocalApi.ScopeName }
                 },
                  new Client
                 {
@@ -92,6 +97,7 @@ namespace ECommerce.IdentityServer
                          "discount_fullpermission",
                          "order_fullpermission",
                          "payment_fullpermission",
+                         "gateway_fullpermission",
                          IdentityServerConstants.StandardScopes.Email,
                          IdentityServerConstants.StandardScopes.Address,
                          IdentityServerConstants.StandardScopes.OpenId,
