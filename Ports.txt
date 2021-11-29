@@ -6,3 +6,4 @@
 - Discount API => 5014
 - Order API => 5015
 - Fake Payment API => 5016
+- Web => 5010
