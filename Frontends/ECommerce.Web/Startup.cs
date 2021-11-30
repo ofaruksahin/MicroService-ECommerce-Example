@@ -1,4 +1,7 @@
+using ECommerce.Web.Services;
+using ECommerce.Web.Services.Interfaces;
 using ECommerce.Web.Settings;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -6,9 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ECommerce.Web
 {
@@ -26,18 +26,35 @@ namespace ECommerce.Web
         {
             services.Configure<ServiceApiSettings>(Configuration.GetSection("ServiceApiSettings"));
             services.Configure<ClientSettings>(Configuration.GetSection("ClientSettings"));
-            services.AddSingleton<ServiceApiSettings>(sp =>
+            services.AddSingleton(sp =>
             {
                 return sp.GetRequiredService<IOptions<ServiceApiSettings>>().Value;
             });
-            services.AddSingleton<ClientSettings>(sp =>
+            services.AddSingleton(sp =>
             {
                 return sp.GetRequiredService<IOptions<ClientSettings>>().Value;
             });
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddControllersWithViews();
+            services.AddHttpContextAccessor();
+            services.AddHttpClient<IIdentityService, IdentityService>();
+            services.AddHttpClient<IUserService, UserService>(opt=>
+            {
+                opt.BaseAddress = new Uri(Configuration.GetSection("ServiceApiSettings").Get<ServiceApiSettings>().IdentityBaseUri);
+            });
+
+            services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, opts =>
+                {
+                    opts.LoginPath = "/Auth/SignIn";
+                    opts.ExpireTimeSpan = TimeSpan.FromDays(60);
+                    opts.SlidingExpiration = true;
+                    opts.Cookie.Name = "ECommerceWebCookie";
+                });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -51,7 +68,7 @@ namespace ECommerce.Web
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

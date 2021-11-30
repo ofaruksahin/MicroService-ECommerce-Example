@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="IdentityModel" Version="6.0.0-preview.2" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.14.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
