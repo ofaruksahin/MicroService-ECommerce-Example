@@ -1,7 +1,7 @@
 ﻿using ECommerce.Web.Models;
 using ECommerce.Web.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace ECommerce.Web.Services
@@ -9,11 +9,15 @@ namespace ECommerce.Web.Services
     public class UserService : IUserService
     {
         private readonly HttpClient _httpClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public Task<UserViewModel> GetUser()
+        public UserService(HttpClient httpClient)
         {
-            throw new System.NotImplementedException();
+            _httpClient = httpClient;
+        }
+
+        public async Task<UserViewModel> GetUser()
+        {
+            return await _httpClient.GetFromJsonAsync<UserViewModel>("/api/user/getuser");
         }
     }
 }

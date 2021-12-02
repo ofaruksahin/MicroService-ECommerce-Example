@@ -1,3 +1,4 @@
+using ECommerce.Web.Handler;
 using ECommerce.Web.Services;
 using ECommerce.Web.Services.Interfaces;
 using ECommerce.Web.Settings;
@@ -36,13 +37,14 @@ namespace ECommerce.Web
             });
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ResourceOwnerPasswordTokenHandler>();
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
             services.AddHttpClient<IIdentityService, IdentityService>();
             services.AddHttpClient<IUserService, UserService>(opt=>
             {
                 opt.BaseAddress = new Uri(Configuration.GetSection("ServiceApiSettings").Get<ServiceApiSettings>().IdentityBaseUri);
-            });
+            }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
