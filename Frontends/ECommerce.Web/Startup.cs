@@ -35,16 +35,24 @@ namespace ECommerce.Web
             {
                 return sp.GetRequiredService<IOptions<ClientSettings>>().Value;
             });
+            var serviceApiSettings = Configuration.GetSection("ServiceApiSettings").Get<ServiceApiSettings>();
+
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICatalogService, CatalogService>();
             services.AddScoped<ResourceOwnerPasswordTokenHandler>();
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
             services.AddHttpClient<IIdentityService, IdentityService>();
             services.AddHttpClient<IUserService, UserService>(opt=>
             {
-                opt.BaseAddress = new Uri(Configuration.GetSection("ServiceApiSettings").Get<ServiceApiSettings>().IdentityBaseUri);
+                opt.BaseAddress = new Uri(serviceApiSettings.IdentityBaseUri);
             }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
+            services.AddHttpClient<ICatalogService, CatalogService>(opt =>
+            {
+                opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.Catalog.Path}/");
+            });
 
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
