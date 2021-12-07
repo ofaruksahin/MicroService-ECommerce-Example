@@ -1,3 +1,4 @@
+using ECommerce.Shared.Services;
 using ECommerce.Web.Handler;
 using ECommerce.Web.Services;
 using ECommerce.Web.Services.Interfaces;
@@ -40,19 +41,26 @@ namespace ECommerce.Web
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICatalogService, CatalogService>();
+            services.AddScoped<ISharedIdentityService, SharedIdentityService>();
+            services.AddScoped<IClientCredentialTokenService, ClientCredentialTokenService>();
             services.AddScoped<ResourceOwnerPasswordTokenHandler>();
+            services.AddScoped<ClientCredentialTokenHandler>();
+            services.AddAccessTokenManagement();
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
             services.AddHttpClient<IIdentityService, IdentityService>();
-            services.AddHttpClient<IUserService, UserService>(opt=>
+            services.AddHttpClient<IUserService, UserService>(opt =>
             {
                 opt.BaseAddress = new Uri(serviceApiSettings.IdentityBaseUri);
             }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
             services.AddHttpClient<ICatalogService, CatalogService>(opt =>
             {
-                opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}/{serviceApiSettings.Catalog.Path}/");
-            });
+                opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}{serviceApiSettings.Catalog.Path}");
+            }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
+
+            services.AddHttpClient<IClientCredentialTokenService, ClientCredentialTokenService>();
+
 
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

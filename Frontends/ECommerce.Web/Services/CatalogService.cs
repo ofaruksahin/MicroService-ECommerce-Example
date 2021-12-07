@@ -32,7 +32,7 @@ namespace ECommerce.Web.Services
 
         public async Task<List<CategoryViewModel>> GetAllCategoriesAsync()
         {
-            var response = await _httpClient.GetAsync("categories");
+            var response = await _httpClient.GetAsync("category");
             if (!response.IsSuccessStatusCode)
             {
                 return null;
@@ -54,7 +54,7 @@ namespace ECommerce.Web.Services
 
         public async Task<List<CourseViewModel>> GetAllCourseByUserIdAsync(string userId)
         {
-            var response = await _httpClient.GetAsync($"courses/GetAllByUserId/{userId}");
+            var response = await _httpClient.GetAsync($"courses/user/{userId}");
             if (!response.IsSuccessStatusCode)
             {
                 return null;
