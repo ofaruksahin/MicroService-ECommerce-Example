@@ -9,7 +9,7 @@ namespace ECommerce.Web.Services.Interfaces
         Task<List<CourseViewModel>> GetAllCourseAsync();
         Task<List<CategoryViewModel>> GetAllCategoriesAsync();
         Task<List<CourseViewModel>> GetAllCourseByUserIdAsync(string userId);
-        Task<CourseViewModel> GetCourseByIdAsync(string userId);
+        Task<CourseViewModel> GetCourseByIdAsync(string id);
         Task<bool> CreateCourseAsync(CourseCreateInput courseCreateInput);
         Task<bool> UpdateCourseAsync(CourseUpdateInput courseUpdateInput);
         Task<bool> DeleteCourseAsync(string courseId);

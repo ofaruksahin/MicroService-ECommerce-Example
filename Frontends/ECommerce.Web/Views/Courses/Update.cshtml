@@ -1,14 +1,16 @@
-﻿@model ECommerce.Web.Models.Catalogs.CourseCreateInput
+﻿@model ECommerce.Web.Models.Catalogs.CourseUpdateInput
 
 <div class="row">
     <div class="col-md-8 offset-md-2">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Kurs Ekleme</h5>
+                <h5 class="card-title">Kurs Güncelleme</h5>
 
-                <form asp-controller="Courses" asp-action="Create" method="post" enctype="multipart/form-data">
+                <form asp-controller="Courses" asp-action="Update" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly"></div>
-
+                    <input type="hidden" asp-for="Id"/>
+                    <input type="hidden" asp-for="UserId"/>
+                    <input type="hidden" asp-for="Picture"/>
                     <div class="mb-3">
                         <label class="form-label" asp-for="CategoryId"></label>
                         <select class="form-control" asp-for="CategoryId" asp-items="@ViewBag.categoryList">
@@ -42,7 +44,7 @@
                         <span class="text-danger" asp-validation-for="Feature.Duration"></span>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Kurs Kaydet</button>
+                    <button type="submit" class="btn btn-primary">Kurs Güncelle</button>
                 </form>
             </div>
         </div>

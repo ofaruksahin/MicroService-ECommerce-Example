@@ -63,9 +63,9 @@ namespace ECommerce.Web.Services
             return (await response.Content.ReadFromJsonAsync<Response<List<CourseViewModel>>>()).Data;
         }
 
-        public async Task<CourseViewModel> GetCourseByIdAsync(string userId)
+        public async Task<CourseViewModel> GetCourseByIdAsync(string id)
         {
-            var response = await _httpClient.GetAsync($"courses/{userId}");
+            var response = await _httpClient.GetAsync($"courses/{id}");
             if (!response.IsSuccessStatusCode)
             {
                 return null;

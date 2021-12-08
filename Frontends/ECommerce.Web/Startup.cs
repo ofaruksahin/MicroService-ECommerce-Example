@@ -43,6 +43,7 @@ namespace ECommerce.Web
             services.AddScoped<ICatalogService, CatalogService>();
             services.AddScoped<ISharedIdentityService, SharedIdentityService>();
             services.AddScoped<IClientCredentialTokenService, ClientCredentialTokenService>();
+            services.AddScoped<IPhotoStockService, PhotoStockService>();
             services.AddScoped<ResourceOwnerPasswordTokenHandler>();
             services.AddScoped<ClientCredentialTokenHandler>();
             services.AddAccessTokenManagement();
@@ -58,6 +59,11 @@ namespace ECommerce.Web
             {
                 opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}{serviceApiSettings.Catalog.Path}");
             }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
+
+            services.AddHttpClient<IPhotoStockService, PhotoStockService>(opt =>
+            {
+                opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}{serviceApiSettings.PhotoStock.Path}");
+            });
 
             services.AddHttpClient<IClientCredentialTokenService, ClientCredentialTokenService>();
 
