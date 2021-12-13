@@ -22,7 +22,7 @@ namespace ECommerce.Services.PhotoStock.Controllers
                     await photo.CopyToAsync(stream, cancellationToken);
 
                 return CreateActionResultInstance(Response<PhotoDto>.Success(new PhotoDto() { 
-                    Url = $"photos/{photo.FileName}"
+                    Url = photo.FileName
                 }, 200));
             }
             return CreateActionResultInstance(Response<NoContent>.Fail("Fotoğraf Yüklenemedi", 400));
@@ -31,7 +31,7 @@ namespace ECommerce.Services.PhotoStock.Controllers
         [HttpDelete]
         public async Task<IActionResult> PhotoDelete(string photoUrl)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "photos", photoUrl);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot","photos", photoUrl);
             if (!System.IO.File.Exists(path))
                 return CreateActionResultInstance(Response<NoContent>.Fail("Fotoğraf bulunamadı", 404));
             System.IO.File.Delete(path);

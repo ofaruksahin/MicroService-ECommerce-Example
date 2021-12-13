@@ -1,5 +1,6 @@
 using ECommerce.Shared.Services;
 using ECommerce.Web.Handler;
+using ECommerce.Web.Helpers;
 using ECommerce.Web.Services;
 using ECommerce.Web.Services.Interfaces;
 using ECommerce.Web.Settings;
@@ -46,6 +47,7 @@ namespace ECommerce.Web
             services.AddScoped<IPhotoStockService, PhotoStockService>();
             services.AddScoped<ResourceOwnerPasswordTokenHandler>();
             services.AddScoped<ClientCredentialTokenHandler>();
+            services.AddSingleton<PhotoHelper>();
             services.AddAccessTokenManagement();
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
@@ -63,7 +65,7 @@ namespace ECommerce.Web
             services.AddHttpClient<IPhotoStockService, PhotoStockService>(opt =>
             {
                 opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}{serviceApiSettings.PhotoStock.Path}");
-            });
+            }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
 
             services.AddHttpClient<IClientCredentialTokenService, ClientCredentialTokenService>();
 

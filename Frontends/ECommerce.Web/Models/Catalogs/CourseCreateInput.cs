@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.Web.Models.Catalogs
 {
@@ -14,11 +15,14 @@ namespace ECommerce.Web.Models.Catalogs
         [Required]
         public decimal Price { get; set; }
         public string UserId { get; set; }
-        public string Photo { get; set; }
+        public string Picture { get; set; }
         public FeatureViewModel Feature { get; set; }
 
         [Display(Name="Kurs Kategorisi")]
         [Required]
         public string CategoryId { get; set; }
+
+        [Display(Name="Kurs Resmi")]
+        public IFormFile PhotoFormFile { get; set; }
     }
 }

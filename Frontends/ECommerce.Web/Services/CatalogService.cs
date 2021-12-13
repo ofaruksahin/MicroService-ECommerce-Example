@@ -1,7 +1,7 @@
 ﻿using ECommerce.Shared.Dtos;
+using ECommerce.Web.Helpers;
 using ECommerce.Web.Models.Catalogs;
 using ECommerce.Web.Services.Interfaces;
-using ECommerce.Web.Settings;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -12,14 +12,26 @@ namespace ECommerce.Web.Services
     public class CatalogService : ICatalogService
     {
         private readonly HttpClient _httpClient;
+        private readonly IPhotoStockService _photoStockService;
+        private readonly PhotoHelper _photoHelper;
 
-        public CatalogService(HttpClient httpClient)
+        public CatalogService(
+            HttpClient httpClient,
+            IPhotoStockService photoStockService,
+            PhotoHelper photoHelper)
         {
             _httpClient = httpClient;
+            _photoStockService = photoStockService;
+            _photoHelper = photoHelper;
         }
 
         public async Task<bool> CreateCourseAsync(CourseCreateInput courseCreateInput)
         {
+            var resultPhotoService = await _photoStockService.UploadPhoto(courseCreateInput.PhotoFormFile);
+            if (resultPhotoService != null)
+            {
+                courseCreateInput.Picture = resultPhotoService.Url;
+            }
             var response = await _httpClient.PostAsJsonAsync("courses", courseCreateInput);
             return response.IsSuccessStatusCode;
         }
@@ -49,7 +61,11 @@ namespace ECommerce.Web.Services
                 return null;
             }
 
-            return (await response.Content.ReadFromJsonAsync<Response<List<CourseViewModel>>>()).Data;
+            var courses = (await response.Content.ReadFromJsonAsync<Response<List<CourseViewModel>>>()).Data;
+
+            courses.ForEach(item => item.Picture = _photoHelper.GetPhotoStockUrl(item.Picture));
+
+            return courses;
         }
 
         public async Task<List<CourseViewModel>> GetAllCourseByUserIdAsync(string userId)
@@ -60,7 +76,14 @@ namespace ECommerce.Web.Services
                 return null;
             }
 
-            return (await response.Content.ReadFromJsonAsync<Response<List<CourseViewModel>>>()).Data;
+            var courses = (await response.Content.ReadFromJsonAsync<Response<List<CourseViewModel>>>()).Data;
+
+            courses.ForEach(item =>
+            {
+                item.Picture = _photoHelper.GetPhotoStockUrl(item.Picture);
+            });
+
+            return courses;
         }
 
         public async Task<CourseViewModel> GetCourseByIdAsync(string id)
@@ -71,11 +94,19 @@ namespace ECommerce.Web.Services
                 return null;
             }
 
-            return (await response.Content.ReadFromJsonAsync<Response<CourseViewModel>>()).Data;
+            var course = (await response.Content.ReadFromJsonAsync<Response<CourseViewModel>>()).Data;
+
+            return course;
         }
 
         public async Task<bool> UpdateCourseAsync(CourseUpdateInput courseUpdateInput)
         {
+            var resultPhotoService = await _photoStockService.UploadPhoto(courseUpdateInput.PhotoFormFile);
+            if (resultPhotoService != null)
+            {
+                await _photoStockService.DeletePhoto(courseUpdateInput.Picture);
+                courseUpdateInput.Picture = resultPhotoService.Url;
+            }
             var response = await _httpClient.PutAsJsonAsync("courses", courseUpdateInput);
             return response.IsSuccessStatusCode;
         }
