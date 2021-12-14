@@ -282,3 +282,4 @@ obj/
 /wwwroot/node_modules
 
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,aspnetcore
+Services/PhotoStock/ECommerce.Services.PhotoStock/wwwroot/

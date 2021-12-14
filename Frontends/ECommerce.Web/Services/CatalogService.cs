@@ -63,7 +63,7 @@ namespace ECommerce.Web.Services
 
             var courses = (await response.Content.ReadFromJsonAsync<Response<List<CourseViewModel>>>()).Data;
 
-            courses.ForEach(item => item.Picture = _photoHelper.GetPhotoStockUrl(item.Picture));
+            courses.ForEach(item => item.StockPictureUrl = _photoHelper.GetPhotoStockUrl(item.Picture));
 
             return courses;
         }
@@ -80,7 +80,7 @@ namespace ECommerce.Web.Services
 
             courses.ForEach(item =>
             {
-                item.Picture = _photoHelper.GetPhotoStockUrl(item.Picture);
+                item.StockPictureUrl = _photoHelper.GetPhotoStockUrl(item.Picture);
             });
 
             return courses;
@@ -95,6 +95,8 @@ namespace ECommerce.Web.Services
             }
 
             var course = (await response.Content.ReadFromJsonAsync<Response<CourseViewModel>>()).Data;
+
+            course.StockPictureUrl = _photoHelper.GetPhotoStockUrl(course.Picture);
 
             return course;
         }
