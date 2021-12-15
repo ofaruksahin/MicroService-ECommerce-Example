@@ -1,4 +1,5 @@
 using ECommerce.Shared.Services;
+using ECommerce.Web.Extensions;
 using ECommerce.Web.Handler;
 using ECommerce.Web.Helpers;
 using ECommerce.Web.Services;
@@ -27,49 +28,10 @@ namespace ECommerce.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<ServiceApiSettings>(Configuration.GetSection("ServiceApiSettings"));
-            services.Configure<ClientSettings>(Configuration.GetSection("ClientSettings"));
-            services.AddSingleton(sp =>
-            {
-                return sp.GetRequiredService<IOptions<ServiceApiSettings>>().Value;
-            });
-            services.AddSingleton(sp =>
-            {
-                return sp.GetRequiredService<IOptions<ClientSettings>>().Value;
-            });
-            var serviceApiSettings = Configuration.GetSection("ServiceApiSettings").Get<ServiceApiSettings>();
-
-            services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ICatalogService, CatalogService>();
-            services.AddScoped<ISharedIdentityService, SharedIdentityService>();
-            services.AddScoped<IClientCredentialTokenService, ClientCredentialTokenService>();
-            services.AddScoped<IPhotoStockService, PhotoStockService>();
-            services.AddScoped<ResourceOwnerPasswordTokenHandler>();
-            services.AddScoped<ClientCredentialTokenHandler>();
-            services.AddSingleton<PhotoHelper>();
+            services.AddHttpClientServices(Configuration);
             services.AddAccessTokenManagement();
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
-            services.AddHttpClient<IIdentityService, IdentityService>();
-            services.AddHttpClient<IUserService, UserService>(opt =>
-            {
-                opt.BaseAddress = new Uri(serviceApiSettings.IdentityBaseUri);
-            }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-
-            services.AddHttpClient<ICatalogService, CatalogService>(opt =>
-            {
-                opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}{serviceApiSettings.Catalog.Path}");
-            }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
-
-            services.AddHttpClient<IPhotoStockService, PhotoStockService>(opt =>
-            {
-                opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}{serviceApiSettings.PhotoStock.Path}");
-            }).AddHttpMessageHandler<ClientCredentialTokenHandler>();
-
-            services.AddHttpClient<IClientCredentialTokenService, ClientCredentialTokenService>();
-
-
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, opts =>

@@ -27,6 +27,7 @@ namespace ECommerce.Services.Basket.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveOrUpdateBasket(BasketDto dto)
         {
+            dto.UserId = _identityService.GetUserId;
             var response = await _basketService.SaveOrUpdate(dto);
             return CreateActionResultInstance(response);
         }
