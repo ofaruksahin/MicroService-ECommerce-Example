@@ -1,17 +1,11 @@
-using ECommerce.Shared.Services;
 using ECommerce.Web.Extensions;
-using ECommerce.Web.Handler;
-using ECommerce.Web.Helpers;
-using ECommerce.Web.Services;
-using ECommerce.Web.Services.Interfaces;
-using ECommerce.Web.Settings;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using System;
 
 namespace ECommerce.Web
@@ -30,7 +24,9 @@ namespace ECommerce.Web
         {
             services.AddHttpClientServices(Configuration);
             services.AddAccessTokenManagement();
-            services.AddControllersWithViews();
+            services
+                .AddControllersWithViews()
+                .AddFluentValidation(fv=> fv.RegisterValidatorsFromAssemblyContaining(typeof(Program)));
             services.AddHttpContextAccessor();
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
