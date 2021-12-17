@@ -34,6 +34,7 @@ namespace ECommerce.Web.Extensions
             services.AddScoped<IClientCredentialTokenService, ClientCredentialTokenService>();
             services.AddScoped<IPhotoStockService, PhotoStockService>();
             services.AddScoped<IBasketService, BasketService>();
+            services.AddScoped<IDiscountService, DiscountService>();
             services.AddScoped<ResourceOwnerPasswordTokenHandler>();
             services.AddScoped<ClientCredentialTokenHandler>();
             services.AddSingleton<PhotoHelper>();        
@@ -56,6 +57,11 @@ namespace ECommerce.Web.Extensions
             services.AddHttpClient<IBasketService, BasketService>(opt =>
             {
                 opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}{serviceApiSettings.Basket.Path}");
+            }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
+            services.AddHttpClient<IDiscountService, DiscountService>(opt =>
+            {
+                opt.BaseAddress = new Uri($"{serviceApiSettings.GatewayBaseUri}{serviceApiSettings.Discount.Path}");
             }).AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
             services.AddHttpClient<IClientCredentialTokenService, ClientCredentialTokenService>();
