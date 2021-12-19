@@ -3,6 +3,7 @@ using ECommerce.Web.Models.Discounts;
 using ECommerce.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ECommerce.Web.Controllers
@@ -47,6 +48,15 @@ namespace ECommerce.Web.Controllers
 
         public async Task<IActionResult> ApplyDiscount(DiscountApplyInput discountApplyInput)
         {
+            if (!ModelState.IsValid)
+            {
+                TempData["discountError"] = ModelState
+                    .Values
+                    .SelectMany(f => f.Errors)
+                    .Select(f => f.ErrorMessage)
+                    .First();
+                return RedirectToAction(nameof(Index));
+            }
             var discountStatus = await _basketService.ApplyDiscount(discountApplyInput.Code);
             TempData["discountStatus"] = discountStatus;
             return RedirectToAction(nameof(Index));

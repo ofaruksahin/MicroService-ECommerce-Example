@@ -42,20 +42,21 @@ namespace ECommerce.Web.Services
         public async Task<bool> ApplyDiscount(string discountCode)
         {
             await CancelApplyDiscount();
-            var basket =await Get();
-            if(basket == null)
+            var basket = await Get();
+            if (basket == null)
             {
                 return false;
             }
 
             var hasDiscount = await _discountService.GetDiscount(discountCode);
-            if(hasDiscount == null)
+            if (hasDiscount == null)
             {
                 return false;
             }
 
-            basket.DiscountRate = hasDiscount.Rate;
-            basket.DiscountCode = hasDiscount.Code;
+            //basket.DiscountRate = hasDiscount.Rate;
+            //basket.DiscountCode = hasDiscount.Code;
+            basket.ApplyDiscount(hasDiscount.Code, hasDiscount.Rate);
             await SaveOrUpdate(basket);
             return true;
         }
@@ -68,7 +69,9 @@ namespace ECommerce.Web.Services
                 return false;
             }
 
-            basket.DiscountCode = string.Empty;
+            //basket.DiscountCode = string.Empty;
+            //basket.DiscountRate = null;
+            basket.CancelDiscount();
             await SaveOrUpdate(basket);
             return true;
         }
