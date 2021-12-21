@@ -20,5 +20,5 @@ namespace ECommerce.Web.Services
             var response = await _httpClient.PostAsJsonAsync<PaymentInfoInput>("fakepayment",paymentInfoInput);
             return response.IsSuccessStatusCode;
         }
-    }
+    } 
 }
