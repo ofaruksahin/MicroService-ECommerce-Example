@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +40,21 @@ namespace ECommerce.Service.FakePayment
             {
                 options.Filters.Add(new AuthorizeFilter(requreAuthorizePolicy));
             });
+
+            services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    //Port : 5672
+                    cfg.Host(Configuration["RabbitMQUrl"], "/", host =>
+                      {
+                          host.Username("root");
+                          host.Password("123456789");
+                      });
+                });
+            });
+
+            services.AddMassTransitHostedService();
 
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
