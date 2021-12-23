@@ -1,6 +1,8 @@
+using ECommerce.Services.Order.Application.Consumers;
 using ECommerce.Services.Order.Application.Mapping;
 using ECommerce.Services.Order.Infrastructure;
 using ECommerce.Shared.Services;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +36,25 @@ namespace ECommerce.Services.Order.API
                     configure.MigrationsAssembly("ECommerce.Services.Order.Infrastructure");
                 });
             });
+
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<CreateOrderMessageCommandConsumer>();
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    //Port : 5672
+                    cfg.Host(Configuration["RabbitMQUrl"], "/", host =>
+                    {
+                        host.Username("root");
+                        host.Password("123456789");
+                    });
+
+                    cfg.ReceiveEndpoint("create-order-service",e => {
+                        e.ConfigureConsumer<CreateOrderMessageCommandConsumer>(context);
+                    });
+                });
+            });
+            services.AddMassTransitHostedService();
 
             services.AddMediatR(typeof(CustomMapping).Assembly);
             services.AddScoped<ISharedIdentityService, SharedIdentityService>();

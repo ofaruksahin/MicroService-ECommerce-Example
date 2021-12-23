@@ -67,7 +67,7 @@ namespace ECommerce.Web.Services
             {
                 var orderItemCreateInput = new OrderItemCreateInput();
                 orderItemCreateInput.ProductId = item.CourseId;
-                orderItemCreateInput.Price = item.GetCurrentPrice ;
+                orderItemCreateInput.Price = item.GetCurrentPrice;
                 orderItemCreateInput.ProductName = item.CourseName;
                 orderItemCreateInput.PictureUrl = string.Empty;
                 orderCreateInput.OrderItems.Add(orderItemCreateInput);
@@ -98,9 +98,61 @@ namespace ECommerce.Web.Services
             return response.Data;
         }
 
-        public Task SuspendOrder(CheckoutInfoInput checkoutInfoInput)
+        public async Task<OrderSuspendViewModel> SuspendOrder(CheckoutInfoInput checkoutInfoInput)
         {
-            throw new System.NotImplementedException();
+            var basket = await _basketService.Get();
+
+            var orderCreateInput = new OrderCreateInput()
+            {
+                BuyerId = _sharedIdentityService.GetUserId,
+                Address = new AddressCreateInput()
+                {
+                    District = checkoutInfoInput.District,
+                    Line = checkoutInfoInput.Line,
+                    Province = checkoutInfoInput.Province,
+                    Street = checkoutInfoInput.Street,
+                    ZipCode = checkoutInfoInput.ZipCode
+                }
+            };
+
+            basket.BasketItems.ForEach(item =>
+            {
+                var orderItemCreateInput = new OrderItemCreateInput();
+                orderItemCreateInput.ProductId = item.CourseId;
+                orderItemCreateInput.Price = item.GetCurrentPrice;
+                orderItemCreateInput.ProductName = item.CourseName;
+                orderItemCreateInput.PictureUrl = string.Empty;
+                orderCreateInput.OrderItems.Add(orderItemCreateInput);
+            });
+
+
+            var paymentInfoInput = new PaymentInfoInput()
+            {
+                CardName = checkoutInfoInput.CardName,
+                CardNumber = checkoutInfoInput.CardNumber,
+                Expiration = checkoutInfoInput.Expiration,
+                CVV = checkoutInfoInput.CVV,
+                TotalPrice = basket.TotalPrice,
+                Order = orderCreateInput
+            };
+
+            var responsePayment = await _paymentService.ReceivePayment(paymentInfoInput);
+
+            if (!responsePayment)
+            {
+                return new OrderSuspendViewModel()
+                {
+                    Error = "Ödeme Alınamadı",
+                    IsSuccessful = false
+                };
+            }
+
+            await _basketService.Delete();
+
+            return new OrderSuspendViewModel()
+            {
+                IsSuccessful = true
+            };
         }
     }
 }

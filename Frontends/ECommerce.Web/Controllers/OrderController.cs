@@ -1,6 +1,7 @@
 ﻿using ECommerce.Web.Models.Orders;
 using ECommerce.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace ECommerce.Web.Controllers
@@ -28,17 +29,29 @@ namespace ECommerce.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Checkout(CheckoutInfoInput checkoutInfoInput)
         {
-            var orderStatus = await _orderService.CreateOrder(checkoutInfoInput);
-            if (!orderStatus.IsSuccessful)
+            #region Sync Scenario            
+            //var orderStatus = await _orderService.CreateOrder(checkoutInfoInput);
+            //if (!orderStatus.IsSuccessful)
+            //{
+            //    TempData["error"] = orderStatus.Error;
+            //    return RedirectToAction(nameof(Checkout));
+            //}
+
+            //return RedirectToAction(nameof(SuccessfulCheckout), new
+            //{
+            //    orderId = orderStatus.OrderId
+            //});
+            #endregion
+            #region Async Scenario
+            var orderSuspend = await _orderService.SuspendOrder(checkoutInfoInput);
+            if (!orderSuspend.IsSuccessful)
             {
-                TempData["error"] = orderStatus.Error;
+                TempData["error"] = orderSuspend.Error;
                 return RedirectToAction(nameof(Checkout));
             }
 
-            return RedirectToAction(nameof(SuccessfulCheckout), new
-            {
-                orderId = orderStatus.OrderId
-            });
+            return RedirectToAction(nameof(SuccessfulCheckout), new { orderId = new Random().Next(1, 1000) });
+            #endregion
         }
 
         public IActionResult SuccessfulCheckout(int orderId)

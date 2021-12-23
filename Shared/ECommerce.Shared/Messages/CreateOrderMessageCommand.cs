@@ -17,6 +17,11 @@ namespace ECommerce.Shared.Messages
         public string ZipCode { get; set; }
 
         public string Line { get; set; }
+
+        public CreateOrderMessageCommand()
+        {
+            OrderItems = new List<OrderItem>();
+        }
     }
 
     public class OrderItem
