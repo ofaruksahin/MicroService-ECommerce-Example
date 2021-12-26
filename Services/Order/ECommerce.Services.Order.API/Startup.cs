@@ -40,6 +40,7 @@ namespace ECommerce.Services.Order.API
             services.AddMassTransit(x =>
             {
                 x.AddConsumer<CreateOrderMessageCommandConsumer>();
+                x.AddConsumer<CourseNameChangedEventConsumer>();
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     //Port : 5672
@@ -51,6 +52,11 @@ namespace ECommerce.Services.Order.API
 
                     cfg.ReceiveEndpoint("create-order-service",e => {
                         e.ConfigureConsumer<CreateOrderMessageCommandConsumer>(context);
+                    });
+
+                    cfg.ReceiveEndpoint("course-name-changed-event-order-service", e =>
+                    {
+                        e.ConfigureConsumer<CourseNameChangedEventConsumer>(context);
                     });
                 });
             });

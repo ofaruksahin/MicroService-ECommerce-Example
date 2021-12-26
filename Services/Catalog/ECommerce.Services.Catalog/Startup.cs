@@ -1,6 +1,7 @@
 using ECommerce.Services.Catalog.Services;
 using ECommerce.Services.Catalog.Settings;
 using ECommerce.Shared.Services;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,6 +43,19 @@ namespace ECommerce.Services.Catalog
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ECommerce.Services.Catalog", Version = "v1" });
+            });
+
+            services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    //Port : 5672
+                    cfg.Host(Configuration["RabbitMQUrl"], "/", host =>
+                    {
+                        host.Username("root");
+                        host.Password("123456789");
+                    });
+                });
             });
 
             services
