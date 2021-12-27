@@ -60,6 +60,7 @@ namespace ECommerce.IdentityServer
             builder.AddDeveloperSigningCredential();
 
             builder.AddResourceOwnerValidator<IdentityResourceOwnerPasswordValidator>();
+            builder.AddExtensionGrantValidator<TokenExchangeExtensionGrantValidator>();
 
             services.AddAuthentication()
                 .AddGoogle(options =>
